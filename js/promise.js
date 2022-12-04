@@ -1,21 +1,28 @@
-"use strict"
+"use strict";
 
-console.log("Запрос данных...");
+const personalPlanPeter = {
+  name: "Peter",
+  age: "29",
+  skills: {
+    languages: ["ru", "eng"],
+    programmingLangs: {
+      js: "20%",
+      php: "10%",
+    },
+    exp: "1 month",
+  },
+  showAgeAndLangs: function () {
+    let str = "";
+    const {name} = personalPlanPeter;
+  }
+};
 
+function showProgrammingLangs(plan) {
+    let str = "";
+    const {programmingLangs} = plan.skills;
 
-const req =new Promise(function (resolve, reject) {
-    setTimeout(() => {
-        console.log("Подготовка данных...");
-    
-        const product = {
-            name: "TV",
-            price: 2000
-        }
-    
-        setTimeout(() => {
-          product.status = "order";
-          console.log(product);  
-        }, 2000);
-    }, 2000);
-});
-
+    for(let key in programmingLangs) {
+        str += `Язык ${key} изучен на ${programmingLangs[key]} \n`;
+    }
+    return str;
+}console.log(showProgrammingLangs(personalPlanPeter));

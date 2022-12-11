@@ -1,28 +1,14 @@
-"use strict";
+"use strict"
 
-const personalPlanPeter = {
-  name: "Peter",
-  age: "29",
-  skills: {
-    languages: ["ru", "eng"],
-    programmingLangs: {
-      js: "20%",
-      php: "10%",
-    },
-    exp: "1 month",
-  },
-  showAgeAndLangs: function () {
-    let str = "";
-    const {name} = personalPlanPeter;
-  }
-};
-
-function showProgrammingLangs(plan) {
-    let str = "";
-    const {programmingLangs} = plan.skills;
-
-    for(let key in programmingLangs) {
-        str += `Язык ${key} изучен на ${programmingLangs[key]} \n`;
+const persone = { 
+    name: "Alex",
+    tel: "+7547577",
+    parents: {
+        mom: "Olga",
+        dad: "Mike"
     }
-    return str;
-}console.log(showProgrammingLangs(personalPlanPeter));
+}
+
+const clone = JSON.parse(JSON.stringify(persone));
+
+clone.parents.mom = "Ann";

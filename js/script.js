@@ -119,9 +119,8 @@ window.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "visible";
   }
 
-
   modal.addEventListener("click", (e) => {
-    if (e.target === modal || e.target.getAttribute("data-close")== "") {
+    if (e.target === modal || e.target.getAttribute("data-close") == "") {
       closeModal();
     }
   });
@@ -132,7 +131,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-    const modalTimerId = setTimeout(openModal, 20000);
+  const modalTimerId = setTimeout(openModal, 20000);
 
   function showModalByScroll() {
     if (
@@ -228,17 +227,16 @@ window.addEventListener("DOMContentLoaded", () => {
   const message = {
     loading: "icons/spinner.svg",
     succes: "Спасибо! Скоро мы с вами свяжемся",
-    failure: "Что-то пошло не так..."
-  }
+    failure: "Что-то пошло не так...",
+  };
 
-  forms.forEach(element => {
+  forms.forEach((element) => {
     postData(element);
   });
 
   function postData(form) {
-    form.addEventListener("submit", (e)=>{
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-
 
       const statusMessage = document.createElement("img");
       statusMessage.src = message.loading;
@@ -247,34 +245,34 @@ window.addEventListener("DOMContentLoaded", () => {
           margin: 0 auto;
       `;
       form.insertAdjacentElement("afterend", statusMessage);
-      const request = new XMLHttpRequest();
-      request.open("POST", "server.php");
 
-
-      request.setRequestHeader("Content-type", "application/json");
       const formData = new FormData(form);
-      
+
       const object = {};
       formData.forEach(function (value, key) {
-        object[key]=value;
+        object[key] = value;
       });
 
-      const json = JSON.stringify(object);
-
-
-      request.send(json);
-
-      request.addEventListener("load", ()=>{
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(message.succes);
-          form.reset();
-            statusMessage.remove();         
-        } else { 
-          showThanksModal(message.failure);
-        }
+      fetch("server/server.php", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(object),
       })
-    })
+        .then((data) => data.text())
+        .catch(() => {
+          showThanksModal(message.failure);
+        })
+        .then((data) => {
+          console.log(data);
+          showThanksModal(message.succes);
+          statusMessage.remove();
+        })
+        .finally(() => {
+          form.reset();
+        });
+    });
   }
 
   function showThanksModal(message) {
@@ -300,6 +298,4 @@ window.addEventListener("DOMContentLoaded", () => {
       closeModal();
     }, 4000);
   }
-
-  API
 });

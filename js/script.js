@@ -231,10 +231,22 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   forms.forEach((element) => {
-    postData(element);
+    bindPostData(element);
   });
 
-  function postData(form) {
+  const postData = async (url, data) => {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: data
+    });
+
+    return res.json();
+  }
+
+  function bindPostData(form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
@@ -298,4 +310,8 @@ window.addEventListener("DOMContentLoaded", () => {
       closeModal();
     }, 4000);
   }
+
+  fetch("http://localhost:3000/menu")
+    .then((data) => data.json())
+    .then((res) => console.log(res));
 });

@@ -187,39 +187,66 @@ window.addEventListener("DOMContentLoaded", () => {
       this.parent.append(element);
     }
   }
-  new MenuCard(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    "Меню 'Фитнесс'",
 
-    "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
-    60,
-    ".menu .container",
-    ".menu__item",
-    "big"
-  ).render();
+  const getResourse = async (url) => {
+    const res = await fetch(url);
 
-  new MenuCard(
-    "img/tabs/elite.jpg",
-    "elite",
-    "Меню 'Премиум'",
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+    }
 
-    "В меню “Премиум” мы используем не только красивый дизайн упаковки, нои качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
-    44,
-    ".menu .container",
-    ".menu__item"
-  ).render();
+    return await res.json();
+  };
 
-  new MenuCard(
-    "img/tabs/post.jpg",
-    "post",
-    "Меню 'Постное'",
+  // getResourse("http://localhost:3000/menu").then((data) => {
+  //   data.forEach(({ img, altimg, title, descr, price }) => {
+  //     new MenuCard(
+  //       img,
+  //       altimg,
+  //       title,
+  //       descr,
+  //       price,
+  //       ".menu .container"
+  //     ).render();
+  //   });
+  // });
 
-    "Меню 'Постное' - это тщательный подбор ингредиентов: полное отсутствиепродуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
-    12,
-    ".menu .container",
-    ".menu__item"
-  ).render();
+  axios.get("http://localhost:3000/menu").then((data) => {
+    data.data.forEach(({ img, altimg, title, descr, price }) => {
+      new MenuCard(
+        img,
+        altimg,
+        title,
+        descr,
+        price,
+        ".menu .container"
+      ).render();
+    });
+  });
+
+  //   getResourse("http://localhost:3000/menu").then((data) => createCard(data));
+
+  //   function createCard(data) {
+  //     data.forEach(({ img, altimg, title, descr, price }) => {
+  //       const element = document.createElement("div");
+
+  //       element.classList.add("menu");
+  //       element.innerHTML = `
+  //                    <div class="menu__item">
+  //                     <img src=${img} alt=${altimg}>
+  //                     <h3 class="menu__item-subtitle">${title}</h3>
+  //                     <div class="menu__item-descr">${descr}</div>
+  //                     <div class="menu__item-divider"></div>
+  //                     <div class="menu__item-price">
+  //                         <div class="menu__item-cost">Цена: </div>
+  //                         <div class="menu__item-total"><span>${price}</span> грн/день</div>
+  //                     </div>
+  //                 </div>
+  //         `;
+
+  //       document.querySelector(".menu .container").append(element);
+  //     });
+  //   }
 
   // Forms
 
@@ -240,11 +267,11 @@ window.addEventListener("DOMContentLoaded", () => {
       headers: {
         "Content-type": "application/json",
       },
-      body: data
+      body: data,
     });
 
-    return res.json();
-  }
+    return await res.json();
+  };
 
   function bindPostData(form) {
     form.addEventListener("submit", (e) => {
@@ -260,19 +287,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const formData = new FormData(form);
 
-      const object = {};
-      formData.forEach(function (value, key) {
-        object[key] = value;
-      });
+      const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-      fetch("server/server.php", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(object),
-      })
-        .then((data) => data.text())
+      postData("http://localhost:3000/requests", json)
         .catch(() => {
           showThanksModal(message.failure);
         })
